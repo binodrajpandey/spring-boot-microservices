@@ -1,0 +1,10 @@
+dependencies {
+    implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+}
+
+configurations {
+    all.collect { configuration ->
+        configuration.exclude   group: 'org.springframework.boot', module: 'spring-boot-starter-web'
+    }
+}

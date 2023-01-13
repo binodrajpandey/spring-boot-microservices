@@ -1,0 +1,7 @@
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation platform('org.testcontainers:testcontainers-bom:1.17.6') //import bom
+    testImplementation "org.testcontainers:mongodb"
+    testImplementation "org.testcontainers:junit-jupiter"
+}

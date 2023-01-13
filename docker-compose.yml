@@ -1,0 +1,26 @@
+version: '3.7'
+services:
+  mysql:
+    container_name: mysql
+    image: mysql
+    platform: linux/amd64
+    ports:
+      - "3306:3306"
+    command: --init-file /data/application/init.sql
+    environment:
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - ./docker/data/mysql:/var/lib/mysql
+      - ./init.sql:/data/application/init.sql
+    restart: always
+  mongo:
+    container_name: mongo
+    image: mongo:4.4.14-rc0-focal
+    restart: always
+    ports:
+      - "27017:27017"
+    expose:
+      - "27017"
+    volumes:
+      - ./docker/data/mongo-data:/data/db

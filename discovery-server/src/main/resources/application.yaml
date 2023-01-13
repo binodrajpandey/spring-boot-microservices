@@ -1,0 +1,8 @@
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    register-with-eureka: false #we don't need to register as a client as it is a server.
+    fetch-registry: false # As it is a server, it doesn't need to fetch the registry
+server:
+  port: 8761 # Default port of a eureka server

@@ -24,3 +24,71 @@ services:
       - "27017"
     volumes:
       - ./docker/data/mongo-data:/data/db
+  discovery-server:
+    container_name: eureka
+    build:
+      context: discovery-server
+    ports:
+      - "8761:8761"
+  api-gateway:
+    container_name: api-gateway
+    build:
+      context: api-gateway
+    ports:
+      - "8080:8080"
+    expose:
+      - "8080"
+    depends_on:
+      - discovery-server
+
+  product-service:
+    container_name: product-service
+    build:
+      context: product-service
+    restart: always
+    depends_on:
+      - mongo
+      - discovery-server
+      - api-gateway
+
+  order-service:
+    container_name: order-service
+    build:
+      context: order-service
+    restart: always
+    depends_on:
+      - mysql
+      - discovery-server
+      - api-gateway
+
+  inventory-service:
+    container_name: inventory-service
+    build:
+      context: inventory-service
+    restart: always
+    depends_on:
+      - mysql
+      - discovery-server
+      - api-gateway
+  prometheus:
+    image: prom/prometheus:v2.37.1
+    container_name: prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+      image: grafana/grafana-oss:8.5.2
+      container_name: grafana
+      restart: always
+      ports:
+        - "3000:3000"
+      links:
+        - prometheus:prometheus
+      volumes:
+        - ./docker/data/grafana:/var/lib/grafana
+      environment:
+        - GF_SECURITY_ADMIN_USER=admin
+        - GF_SECURITY_ADMIN_PASSWORD=admin

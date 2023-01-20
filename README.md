@@ -1,6 +1,20 @@
 ## Run required dependencies
-./gradlew bootJar
-docker-compose up -d
+```commandline
+sh ./gradlew bootJar
+docker-compose up -d --build
+```
+
+If you want to run locally, do following steps
+1. Run required dependencies
+```commandline
+ docker-compose -f docker-compose-local.yml up -d
+```
+2. Run services in the following order
+- discovery-server
+- api-gateway
+- product-service
+- inventory-service
+- order-service
 
 ## Monitoring
 
@@ -15,3 +29,32 @@ docker-compose up -d
 - Add data source
 - Set prometheus url: http://prometheus:9090
 - Create dashboard by importing json `grafana_dashboard.json`
+
+## Check if api-gateway is working fine
+### product-service
+POST: localhost:8080/api/product
+```json
+{
+    "name": "iPhone",
+    "description": "iPhone14",
+    "price": 120
+}
+```
+
+GET: localhost:8080/api/product
+
+### order-service with inventory-service
+
+POST: localhost:8080/api/order
+```json
+{
+  "orderLineItems":  [
+    {
+    "id": 1, 
+    "skuCode": "iphone_13",
+    "quantity": 10,
+    "price": 120
+    }
+]
+}
+```

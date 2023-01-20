@@ -24,6 +24,7 @@ public class OrderService {
   private final WebClient.Builder webClientBuilder;
 
   public void placeOrder(OrderRequest orderRequest) {
+
     final var order = new Order();
     order.setOrderNumber(UUID.randomUUID().toString());
 
@@ -33,10 +34,9 @@ public class OrderService {
 
     final List<String> skuCodes =
         order.getOrderLineItems().stream().map(OrderLineItems::getSkuCode).collect(Collectors.toList());
-
     InventoryResponse[] inventoryResponses = webClientBuilder.build().get()
         .uri("http://inventory-service/api/inventory",
-            uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
+            uriBuilder -> uriBuilder.queryParam("skuCodes", skuCodes).build())
         .retrieve()
         .bodyToMono(InventoryResponse[].class)
         .block();
@@ -54,8 +54,8 @@ public class OrderService {
 
   private OrderLineItems mapToOrderLineItems(OrderLineItemsDto orderLineItemsDto) {
     final var orderLineItems = new OrderLineItems();
-    orderLineItems.setPrice(orderLineItemsDto.getPrice());
-    orderLineItems.setQuantity(orderLineItems.getQuantity());
+    orderLineItems.setQuantity(orderLineItemsDto.getQuantity());
+    orderLineItems.setSkuCode(orderLineItemsDto.getSkuCode());
     orderLineItems.setPrice(orderLineItemsDto.getPrice());
     return orderLineItems;
   }

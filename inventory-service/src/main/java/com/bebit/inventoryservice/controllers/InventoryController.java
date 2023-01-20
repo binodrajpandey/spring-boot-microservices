@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class InventoryController {
 
-  private InventoryService inventoryService;
+  private final InventoryService inventoryService;
 
   @GetMapping
   @ResponseStatus(HttpStatus.OK)

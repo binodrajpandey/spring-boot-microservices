@@ -72,8 +72,9 @@ POST: localhost:8080/api/order
 ```
 
 ### Service with different framework
-Install dependencies
+Install dependencies (not required for docker)
 ```commandline
+cd user-journey-service
 pip install -r requirement.txt
 uvicorn main:app --reload
 

@@ -2,3 +2,29 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://eureka:8761/eureka/
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/product
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/order
+        - id: user-journey-service
+          uri: http://user-journey-service:8000
+          predicates:
+            - Path=/api/journey
+        - id: discovery-server
+          uri: http://eureka:8761
+          predicates:
+            - Path=/eureka/web
+          filters:
+            - SetPath=/
+        - id: discovery-server-static-resources
+          uri: http://eureka:8761
+          predicates:
+            - Path=/eureka/**

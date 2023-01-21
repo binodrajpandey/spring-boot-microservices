@@ -31,8 +31,20 @@ If you want to run locally, do following steps
 - Create dashboard by importing json `grafana_dashboard.json`
 
 ## Check if api-gateway is working fine
+
+### Login
+POST: localhost:8080/api/auth/login
+```json
+{
+    "username": "binod",
+    "password": "binod"
+}
+```
+For each request accept we need jwt token which we can get from the /api/auth/login api above.
+Authorization type: Bearer token
 ### product-service
 POST: localhost:8080/api/product
+
 ```json
 {
     "name": "iPhone",

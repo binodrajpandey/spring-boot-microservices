@@ -70,3 +70,20 @@ POST: localhost:8080/api/order
 ]
 }
 ```
+
+### Service with different framework
+Install dependencies
+```commandline
+pip install -r requirement.txt
+uvicorn main:app --reload
+
+```
+Check the response
+GET: localhost:8080/api/journey
+
+expected response:
+```json
+{
+    "message": "Hello I am from journey service"
+}
+```

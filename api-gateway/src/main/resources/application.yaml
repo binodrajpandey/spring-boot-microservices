@@ -19,6 +19,10 @@ spring:
         uri: lb://order-service
         predicates:
         - Path=/api/order
+      - id: user-journey-service
+        uri: http://localhost:8000
+        predicates:
+          - Path=/api/journey
       - id: discovery-server
         uri: http://localhost:8761
         predicates:

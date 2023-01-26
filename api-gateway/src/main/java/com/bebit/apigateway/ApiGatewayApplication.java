@@ -2,6 +2,7 @@ package com.bebit.apigateway;
 
 import com.bebit.apigateway.repositories.AppUserRepository;
 import com.bebit.apigateway.security.models.AppUser;
+import com.bebit.apigateway.security.models.Role;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,6 +26,7 @@ public class ApiGatewayApplication {
           .lastname("Pandey")
           .username("binod")
           .password(passwordEncoder.encode("binod"))
+          .role(Role.NORMAL)
           .build();
       appUserRepository.save(appUser1);
 

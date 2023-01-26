@@ -5,6 +5,14 @@ eureka:
 spring:
   application:
     name: api-gateway
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/jwt_security
+    username: root
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
 
 
 ## Define product-service, Order-Service, Discovery-server Route. https://www.youtube.com/watch?v=8PJUnnhLXiI&ab_channel=ProgrammingTechie

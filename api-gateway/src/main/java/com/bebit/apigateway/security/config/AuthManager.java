@@ -1,12 +1,12 @@
 package com.bebit.apigateway.security.config;
 
+import com.bebit.apigateway.security.services.AppUserDetailsService;
 import com.bebit.apigateway.security.services.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 public class AuthManager implements ReactiveAuthenticationManager {
 
   private final JwtService jwtService;
-  private final ReactiveUserDetailsService userDetailsService;
+  private final AppUserDetailsService userDetailsService;
 
 
   @Override

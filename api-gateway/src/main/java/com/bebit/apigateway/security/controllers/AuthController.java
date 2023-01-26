@@ -1,10 +1,10 @@
 package com.bebit.apigateway.security.controllers;
 
 import com.bebit.apigateway.security.models.LoginRequest;
+import com.bebit.apigateway.security.services.AppUserDetailsService;
 import com.bebit.apigateway.security.services.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,14 +19,14 @@ import reactor.core.publisher.Mono;
 public class AuthController {
 
   private final JwtService jwtService;
-  private final ReactiveUserDetailsService reactiveUserDetailsService;
+  private final AppUserDetailsService appUserDetailsService;
   private final PasswordEncoder passwordEncoder;
 
 
   @PostMapping("/login")
   public Mono<ResponseEntity<String>> login(@RequestBody LoginRequest loginRequest) {
     final Mono<UserDetails> userMono =
-        reactiveUserDetailsService.findByUsername(loginRequest.getUsername());
+        appUserDetailsService.findByUsername(loginRequest.getUsername());
     return userMono.map(
         user -> {
           if (passwordEncoder.matches(

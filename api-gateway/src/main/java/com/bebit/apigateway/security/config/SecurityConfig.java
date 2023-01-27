@@ -32,7 +32,8 @@ public class SecurityConfig {
     return http
         .authorizeExchange(auth -> {
           auth.pathMatchers("/api/auth/login").permitAll();
-          auth.pathMatchers(HttpMethod.POST, "/api/product").hasAnyAuthority(Role.ADMIN.name());
+          auth.pathMatchers(HttpMethod.GET, "/api/product").hasAnyAuthority(Role.GET_PRODUCT.name());
+          auth.pathMatchers(HttpMethod.POST, "/api/product").hasAnyAuthority(Role.EDIT_PRODUCT.name());
           auth.anyExchange().authenticated();
         })
         .addFilterAt(jwtFilter, SecurityWebFiltersOrder.AUTHENTICATION)

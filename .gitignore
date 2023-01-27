@@ -4,3 +4,7 @@ build
 */build
 docker/data**
 __pycache__/
+
+*/BOOT-INF/
+*/META-INF/
+*/org/

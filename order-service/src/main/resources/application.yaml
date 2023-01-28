@@ -20,4 +20,29 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,prometheus
+        include: "*"
+  health:
+    circuitbreakers.enabled: true
+  endpoint:
+    health.show-details: always
+resilience4j:
+  circuitbreaker:
+    instances:
+      inventory:
+        registerHealthIndicator: true # To see the different states (close, open, half-open)
+        event-consumer-buffer-size: 10
+        slidingWindowType: COUNT_BASED # it doesn't open state right way when server is not available.
+        slidingWindowSize: 5 # after 5 failed request, the circuit breaker will change the state from close to open.
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5s # time to change from half-open to half-open. or we can say that the circuit breaker will be in open state for only 5s.
+        permittedNumberOfCallsInHalfOpenState: 3 # If 3 calls failed in half-open state, change to open state. if 3 calls successful change to close.
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+  timelimiter:
+    instances:
+      inventory:
+        timeout-duration: 3s # If the server doesn't respond up to 3s, throw timeout exception.
+  retry:
+    instances:
+      inventory:
+        max-attempts: 3
+        wait-duration: 5s # we don't get response until 5s, retry.

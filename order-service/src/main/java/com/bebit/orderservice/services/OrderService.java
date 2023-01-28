@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -18,12 +19,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class OrderService {
 
   private final OrderRepository orderRepository;
   private final WebClient.Builder webClientBuilder;
 
-  public void placeOrder(OrderRequest orderRequest) {
+  public String placeOrder(OrderRequest orderRequest) {
+    log.info("Start to place the order...");
 
     final var order = new Order();
     order.setOrderNumber(UUID.randomUUID().toString());
@@ -45,6 +48,7 @@ public class OrderService {
 
     if (isInStock) {
       orderRepository.save(order);
+      return "Order Placed Successfully";
     } else {
       throw new IllegalArgumentException("Stock is not available, please place the order later.");
     }

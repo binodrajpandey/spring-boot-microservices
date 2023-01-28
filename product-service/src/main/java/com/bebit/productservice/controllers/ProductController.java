@@ -4,6 +4,7 @@ import com.bebit.productservice.dtos.ProductRequest;
 import com.bebit.productservice.dtos.ProductResponse;
 import com.bebit.productservice.services.ProductService;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +30,8 @@ public class ProductController {
 
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
-  public List<ProductResponse> getAllProducts() {
+  public List<ProductResponse> getAllProducts() throws InterruptedException {
+    TimeUnit.SECONDS.sleep(5L);
     return productService.getAllProducts();
 
   }

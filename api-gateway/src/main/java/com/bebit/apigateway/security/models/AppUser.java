@@ -1,13 +1,13 @@
 package com.bebit.apigateway.security.models;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,12 +33,11 @@ public class AppUser implements UserDetails {
   private String username;
   private String email;
   private String password;
-  @Enumerated
-  private Role role;
+  private Set<Role> roles;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of(new SimpleGrantedAuthority(role.name()));
+    return roles.stream().map(role -> new SimpleGrantedAuthority(role.name())).collect(Collectors.toList());
   }
 
   @Override

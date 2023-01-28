@@ -4,6 +4,7 @@ import com.bebit.apigateway.repositories.AppUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -15,6 +16,7 @@ public class AppUserDetailsService implements ReactiveUserDetailsService {
 
   @Override
   public Mono<UserDetails> findByUsername(String username) {
-    return Mono.just(appUserRepository.findByUsername(username).orElse(null));
+    return Mono.just(appUserRepository.findByUsername(username)
+        .orElseThrow(() -> new UsernameNotFoundException(String.format("User with username: {} not found", username))));
   }
 }

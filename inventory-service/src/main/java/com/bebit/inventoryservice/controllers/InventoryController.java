@@ -3,6 +3,7 @@ package com.bebit.inventoryservice.controllers;
 import com.bebit.inventoryservice.dtos.InventoryResponse;
 import com.bebit.inventoryservice.services.InventoryService;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +22,8 @@ public class InventoryController {
 
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
-  public List<InventoryResponse> isInStock(@RequestParam List<String> skuCodes) {
+  public List<InventoryResponse> isInStock(@RequestParam List<String> skuCodes) throws InterruptedException {
+//    TimeUnit.SECONDS.sleep(15); // Uncomment this to test timeout for circuit breaker.
     return inventoryService.isInStock(skuCodes);
   }
 

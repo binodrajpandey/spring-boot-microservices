@@ -2,6 +2,10 @@ package com.bebit.orderservice.controllers;
 
 import com.bebit.orderservice.dtos.OrderRequest;
 import com.bebit.orderservice.services.OrderService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,10 +23,20 @@ public class OrderController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public String placeOrder(@RequestBody OrderRequest orderRequest) {
+  @CircuitBreaker(name = "inventory", fallbackMethod = "fallbackMethod")
+  @TimeLimiter(name = "inventory")
+  @Retry(name = "inventory")
+  public CompletableFuture<String> placeOrder(@RequestBody OrderRequest orderRequest) {
 
-    orderService.placeOrder(orderRequest);
-    return "Order Placed Successfully";
+    return CompletableFuture.supplyAsync(() -> orderService.placeOrder(orderRequest));
+  }
+
+  /**
+   * Return type should be same as that of the api method. This can be implemented in the service as well.
+   * OrderService might throw RuntimeException so we use it here.
+   */
+  public CompletableFuture<String> fallbackMethod(OrderRequest orderRequest, RuntimeException runtimeException) {
+    return CompletableFuture.supplyAsync(() -> "Oops! Something went wrong. Please place the order after some time.");
 
   }
 

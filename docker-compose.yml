@@ -110,3 +110,9 @@ services:
       environment:
         - GF_SECURITY_ADMIN_USER=admin
         - GF_SECURITY_ADMIN_PASSWORD=admin
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"

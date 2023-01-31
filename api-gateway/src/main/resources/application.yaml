@@ -47,9 +47,13 @@ logging:
     root: INFO
     org.springframework.cloud.gateway.route.RouteDefinitionLocator: INFO
     org.springframework.cloud.gateway: TRACE
+  pattern.level: "trace_id=%mdc{traceId} span_id=%mdc{spanId} trace_flags=%mdc{traceFlags} %p"
 
 management:
   endpoints:
     web:
       exposure:
         include: prometheus
+  tracing:
+    enabled: true
+    sampling.probability: 1.0

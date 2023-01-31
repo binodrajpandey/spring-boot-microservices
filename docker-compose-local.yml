@@ -24,3 +24,9 @@ services:
       - "27017"
     volumes:
       - ./docker/data/mongo-data:/data/db
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"

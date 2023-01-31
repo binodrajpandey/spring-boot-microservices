@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.0.1'
+    id 'org.springframework.boot' version '3.0.2'
     id 'io.spring.dependency-management' version '1.1.0'
 }
 repositories {
@@ -34,6 +34,11 @@ subprojects {
 
     dependencies {
         implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'io.micrometer:micrometer-registry-prometheus'
+        implementation(platform("io.micrometer:micrometer-tracing-bom:1.0.0"))
+        implementation("io.micrometer:micrometer-tracing")
+        implementation("io.micrometer:micrometer-tracing-bridge-otel")
+        implementation("io.opentelemetry:opentelemetry-exporter-zipkin")
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
         testImplementation 'org.springframework.boot:spring-boot-starter-test'

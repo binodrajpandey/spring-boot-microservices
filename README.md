@@ -1,7 +1,6 @@
-## Run required dependencies
+## Run project using docker
 ```commandline
-sh ./gradlew bootJar
-docker-compose up -d --build
+sh run-project.sh
 ```
 
 If you want to run locally, do following steps

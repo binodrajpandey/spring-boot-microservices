@@ -28,13 +28,6 @@ management:
   tracing:
     enabled: true
     sampling.probability: 1.0
-  metrics:
-    distribution:
-      percentiles-histogram:
-        http:
-          server:
-            requests: true
-  tracing.endpoint: http://localhost:9411/api/v2/spans
 
 resilience4j:
   circuitbreaker:
@@ -57,5 +50,5 @@ resilience4j:
       inventory:
         max-attempts: 3
         wait-duration: 5s # we don't get response until 5s, retry.
-logging:
-  pattern.level: "trace_id=%mdc{traceId} span_id=%mdc{spanId} trace_flags=%mdc{traceFlags} %p"
+#logging:
+#  pattern.level: "trace_id=%mdc{traceId} span_id=%mdc{spanId} trace_flags=%mdc{traceFlags} %p"

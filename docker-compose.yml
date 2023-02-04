@@ -43,6 +43,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
+      - zipkin
       - discovery-server
     restart: always
 
@@ -67,6 +68,7 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       - mysql
+      - zipkin
       - discovery-server
       - api-gateway
 
@@ -79,6 +81,7 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       - mysql
+      - zipkin
       - discovery-server
       - api-gateway
 

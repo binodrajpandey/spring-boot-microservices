@@ -47,13 +47,13 @@ logging:
     root: INFO
     org.springframework.cloud.gateway.route.RouteDefinitionLocator: INFO
     org.springframework.cloud.gateway: TRACE
-  pattern.level: "trace_id=%mdc{traceId} span_id=%mdc{spanId} trace_flags=%mdc{traceFlags} %p"
+#  pattern.level: "trace_id=%mdc{traceId} span_id=%mdc{spanId} trace_flags=%mdc{traceFlags} %p"
 
 management:
   endpoints:
     web:
       exposure:
-        include: prometheus
+        include: prometheus,health,metrics
   tracing:
     enabled: true
-    sampling.probability: 1.0
+    sampling.probability: 1.0 # All traces should be sent to latency analysis tool

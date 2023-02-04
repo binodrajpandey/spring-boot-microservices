@@ -4,6 +4,8 @@ spring:
     url: jdbc:mysql://mysql:3306/order-service
     username: root
     password: password
+management:
+  zipkin.tracing.endpoint: http://zipkin:9411/api/v2/spans
 
 eureka:
   client:

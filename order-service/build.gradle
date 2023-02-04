@@ -6,4 +6,9 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
     runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // For tracer
+    implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+    // For latency visualization in zipkin
+    implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
 }

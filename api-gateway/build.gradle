@@ -11,6 +11,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
+    // For tracer
+    implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+    // For latency visualization in zipkin
+    implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
+
     // Mysql Connection
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'com.mysql:mysql-connector-j'

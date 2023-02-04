@@ -19,4 +19,9 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,prometheus
+        include: health,prometheus,metrics
+  tracing:
+    enabled: true
+    sampling.probability: 1.0
+#logging:
+#  pattern.level: "trace_id=%mdc{traceId} span_id=%mdc{spanId} trace_flags=%mdc{traceFlags} %p"

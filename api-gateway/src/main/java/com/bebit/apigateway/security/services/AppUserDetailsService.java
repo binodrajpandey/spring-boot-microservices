@@ -17,6 +17,6 @@ public class AppUserDetailsService implements ReactiveUserDetailsService {
   @Override
   public Mono<UserDetails> findByUsername(String username) {
     return Mono.just(appUserRepository.findByUsername(username)
-        .orElseThrow(() -> new UsernameNotFoundException(String.format("User with username: {} not found", username))));
+        .orElseThrow(() -> new UsernameNotFoundException(String.format("User with username: %s not found", username))));
   }
 }

@@ -24,19 +24,20 @@ public class OrderController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @CircuitBreaker(name = "inventory", fallbackMethod = "fallbackMethod")
-  @TimeLimiter(name = "inventory")
+//  @TimeLimiter(name = "inventory") //TODO: timelimiter not working with docker, need to check why?
   @Retry(name = "inventory")
-  public CompletableFuture<String> placeOrder(@RequestBody OrderRequest orderRequest) {
+  public String placeOrder(@RequestBody OrderRequest orderRequest) {
 
-    return CompletableFuture.supplyAsync(() -> orderService.placeOrder(orderRequest));
+    return orderService.placeOrder(orderRequest);
+//    return CompletableFuture.supplyAsync(() -> orderService.placeOrder(orderRequest));
   }
 
   /**
    * Return type should be same as that of the api method. This can be implemented in the service as well.
    * OrderService might throw RuntimeException so we use it here.
    */
-  public CompletableFuture<String> fallbackMethod(OrderRequest orderRequest, RuntimeException runtimeException) {
-    return CompletableFuture.supplyAsync(() -> "Oops! Something went wrong. Please place the order after some time.");
+  public String fallbackMethod(OrderRequest orderRequest, RuntimeException runtimeException) {
+    return "Oops! Something went wrong. Please place the order after some time.";
 
   }
 

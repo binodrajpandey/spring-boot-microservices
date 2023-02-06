@@ -37,6 +37,7 @@ public class OrderService {
 
     final List<String> skuCodes =
         order.getOrderLineItems().stream().map(OrderLineItems::getSkuCode).collect(Collectors.toList());
+    log.info("checking stock in inventory-service...");
     InventoryResponse[] inventoryResponses = webClientBuilder.build().get()
         .uri("http://inventory-service/api/inventory",
             uriBuilder -> uriBuilder.queryParam("skuCodes", skuCodes).build())
@@ -45,6 +46,7 @@ public class OrderService {
         .block();
 
     final boolean isInStock = Stream.of(inventoryResponses).allMatch(InventoryResponse::isInStock);
+    log.info("Stock available: {}", isInStock);
 
     if (isInStock) {
       orderRepository.save(order);

@@ -1,4 +1,4 @@
-rootProject.name = 'microservices-new'
+rootProject.name = 'microservices-example-project'
 include 'product-service'
 include 'inventory-service'
 include 'order-service'

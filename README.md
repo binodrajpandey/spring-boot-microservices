@@ -3,31 +3,24 @@
 sh run-project.sh
 ```
 
+## Run project manually
 If you want to run locally, do following steps
 1. Run required dependencies
 ```commandline
  docker-compose -f docker-compose-local.yml up -d
 ```
 2. Run services in the following order
-- discovery-server
-- api-gateway
-- product-service
-- inventory-service
-- order-service
-
-## Monitoring
-
-![](./static/images/grafana-monitor-diagram.drawio.svg)
-
-- Spring-boot app will expose metrics via actuator endpoints.
-- Prometheus polls for the metrics at a regular interval configured in prometheus.yml
-- Prometheus stores the metrics which acts as datasource for the grafana
-- Grafana polls the data from prometheus at a regular interval and display on the dashboard 
-
-## Create a grafana dash-board
-- Add data source
-- Set prometheus url: http://prometheus:9090
-- Create dashboard by importing json `grafana_dashboard.json`
+- discovery-server (uses port:8761)
+- api-gateway (uses port: 8080)
+- product-service (uses port: 8081)
+- inventory-service (uses port: 8083)
+- order-service (uses port: 8080)
+- run user-journey-service (uses port: 8000) (Service with different framework)
+  ```agsl
+    cd user-journey-service
+    pip install -r requirement.txt
+    uvicorn main:app --reload
+    ```
 
 ## Check if api-gateway is working fine
 
@@ -39,8 +32,10 @@ POST: localhost:8080/api/auth/login
     "password": "binod"
 }
 ```
-For each request accept we need jwt token which we can get from the /api/auth/login api above.
+For each request accept login, we need jwt token which we can get from the `/api/auth/login` api above.
+
 Authorization type: Bearer token
+
 ### product-service
 POST: localhost:8080/api/product
 
@@ -53,6 +48,18 @@ POST: localhost:8080/api/product
 ```
 
 GET: localhost:8080/api/product
+
+Response:
+```agsl
+[
+    {
+        "id": "66d7ee3bd482852c6e6c93c3",
+        "name": "iPhone",
+        "description": "iPhone14",
+        "price": 120
+    }
+]
+```
 
 ### order-service with inventory-service
 
@@ -71,14 +78,6 @@ POST: localhost:8080/api/order
 ```
 
 ### Service with different framework
-Install dependencies (not required for docker)
-```commandline
-cd user-journey-service
-pip install -r requirement.txt
-uvicorn main:app --reload
-
-```
-Check the response
 GET: localhost:8080/api/journey
 
 expected response:
@@ -87,3 +86,17 @@ expected response:
     "message": "Hello I am from journey service"
 }
 ```
+
+## Monitoring
+
+![](./static/images/grafana-monitor-diagram.drawio.svg)
+
+- Spring-boot app will expose metrics via actuator endpoints.
+- Prometheus polls for the metrics at a regular interval configured in prometheus.yml
+- Prometheus stores the metrics which acts as datasource for the grafana
+- Grafana polls the data from prometheus at a regular interval and display on the dashboard
+
+## Create a grafana dash-board
+- Add data source
+- Set prometheus url: http://prometheus:9090
+- Create dashboard by importing json `grafana_dashboard.json`

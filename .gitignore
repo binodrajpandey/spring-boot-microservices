@@ -1,5 +1,6 @@
 .idea
 .gradle
+.DS_Store
 build
 */build
 docker/data**

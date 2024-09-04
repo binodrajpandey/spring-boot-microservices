@@ -1,6 +1,7 @@
 package com.bebit.apigateway.security.config;
 
 import com.bebit.apigateway.security.models.Role;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,6 +18,7 @@ import org.springframework.security.web.server.authentication.AuthenticationWebF
  */
 @EnableWebFluxSecurity
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
 
   @Bean
@@ -24,9 +26,13 @@ public class SecurityConfig {
     return new BCryptPasswordEncoder();
   }
 
+
   @Bean
-  public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, AuthConverter jwtAuthConverter,
-      AuthManager jwtAuthManager) {
+  public SecurityWebFilterChain securityWebFilterChain(
+      ServerHttpSecurity http,
+      AuthConverter jwtAuthConverter,
+      AuthManager jwtAuthManager
+  ) {
     AuthenticationWebFilter jwtFilter = new AuthenticationWebFilter(jwtAuthManager);
     jwtFilter.setServerAuthenticationConverter(jwtAuthConverter);
     return http

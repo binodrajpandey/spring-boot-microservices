@@ -9,7 +9,6 @@ import java.sql.Date;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import javax.crypto.SecretKey;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,15 +35,6 @@ public class JwtService {
   public String getUsernameFromToken(String token) {
     Claims claims = jwtParser.parseClaimsJws(token).getBody();
     return claims.getSubject();
-  }
-
-  /**
-   * Check username and token expiration.
-   */
-  public boolean validateToken(UserDetails userDetails, String token) {
-    Claims claims = jwtParser.parseClaimsJws(token).getBody();
-    boolean isNotExpired = claims.getExpiration().after(Date.from(Instant.now()));
-    return isNotExpired && claims.getSubject().equals(userDetails.getUsername());
   }
 
 }

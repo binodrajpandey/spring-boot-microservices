@@ -1,11 +1,15 @@
 package com.bebit.apigateway.security.models;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -25,19 +29,39 @@ import org.springframework.security.core.userdetails.UserDetails;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AppUser implements UserDetails {
+
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;
+
   private String firstname;
   private String lastname;
   private String username;
   private String email;
   private String password;
-  private Set<Role> roles;
+
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "client_id")
+  private Client client;
+
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "role_id")
+  private AppUserRole appRole;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return roles.stream().map(role -> new SimpleGrantedAuthority(role.name())).collect(Collectors.toList());
+    List<SimpleGrantedAuthority> permissions = appRole.getAppUserPermissions()
+        .stream()
+        .map(appUserPermission -> new SimpleGrantedAuthority(appUserPermission.getCodename().name()))
+        .collect(Collectors.toList());
+    List<SimpleGrantedAuthority> roles = List.of(new SimpleGrantedAuthority("ROLE_" + appRole.getName().name()));
+    permissions.addAll(roles);
+    Set<SimpleGrantedAuthority> contractedPermissions = client.getParseContractedServices().stream()
+            .map(contractedService -> new SimpleGrantedAuthority(contractedService.name()))
+                .collect(Collectors.toSet());
+
+    permissions.addAll(contractedPermissions);
+    return permissions;
   }
 
   @Override

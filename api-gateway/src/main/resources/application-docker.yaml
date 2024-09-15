@@ -24,10 +24,10 @@ management:
           uri: lb://order-service
           predicates:
             - Path=/api/order
-        - id: user-journey-service
-          uri: http://user-journey-service:8000
+        - id: funnel-service
+          uri: http://funnel-service:8000
           predicates:
-            - Path=/api/journey
+            - Path=/api/funnel
         - id: discovery-server
           uri: http://eureka:8761
           predicates:

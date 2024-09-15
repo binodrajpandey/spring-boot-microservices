@@ -15,9 +15,9 @@ If you want to run locally, do following steps
 - product-service (uses port: 8081)
 - inventory-service (uses port: 8083)
 - order-service (uses port: 8080)
-- run user-journey-service (uses port: 8000) (Service with different framework)
+- run funnel-service (uses port: 8000) (Service with different framework)
   ```agsl
-    cd user-journey-service
+    cd funnel-service
     pip install -r requirement.txt
     uvicorn main:app --reload
     ```
@@ -78,12 +78,12 @@ POST: localhost:8080/api/order
 ```
 
 ### Service with different framework
-GET: localhost:8080/api/journey
+GET: localhost:8080/api/funnel
 
 expected response:
 ```json
 {
-    "message": "Hello I am from journey service"
+    "message": "Hello I am from funnel service"
 }
 ```
 

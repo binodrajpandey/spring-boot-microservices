@@ -11,7 +11,7 @@ services:
       MYSQL_ROOT_HOST: '%'
       MYSQL_ROOT_PASSWORD: password
     volumes:
-      - ./docker/data/mysql:/var/lib/mysql
+      - ./docker/data/mysql1:/var/lib/mysql
       - ./init.sql:/data/application/init.sql
     restart: always
   mongo:

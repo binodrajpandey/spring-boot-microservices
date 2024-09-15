@@ -85,10 +85,10 @@ services:
       - discovery-server
       - api-gateway
 
-  user-journey-service:
-    container_name: user-journey-service
+  funnel-service:
+    container_name: funnel-service
     build:
-      context: user-journey-service
+      context: funnel-service
     restart: always
     depends_on:
       - api-gateway

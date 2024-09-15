@@ -10,9 +10,9 @@ spring:
     url: jdbc:mysql://localhost:3306/jwt_security
     username: root
     password: password
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
+#  jpa:
+#    hibernate:
+#      ddl-auto: create-drop
 
 
 ## Define product-service, Order-Service, Discovery-server Route. https://www.youtube.com/watch?v=8PJUnnhLXiI&ab_channel=ProgrammingTechie
@@ -27,10 +27,10 @@ spring:
         uri: lb://order-service
         predicates:
         - Path=/api/order
-      - id: user-journey-service
+      - id: funnel-service
         uri: http://localhost:8000
         predicates:
-          - Path=/api/journey
+          - Path=/api/funnel
       - id: discovery-server
         uri: http://localhost:8761
         predicates:

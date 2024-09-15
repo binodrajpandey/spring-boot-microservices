@@ -39,7 +39,7 @@ public class AuthManager implements ReactiveAuthenticationManager {
                     });
                   }
                     return Mono.just(
-                        new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities()));
+                        new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities()));
                 });
 
           } catch (ExpiredJwtException e) {

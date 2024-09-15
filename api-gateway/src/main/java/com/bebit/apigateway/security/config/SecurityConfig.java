@@ -1,6 +1,5 @@
 package com.bebit.apigateway.security.config;
 
-import com.bebit.apigateway.repositories.AppUserRepository;
 import com.bebit.apigateway.security.models.AppUser;
 import com.bebit.apigateway.security.models.permissions.ContractedService;
 import com.bebit.apigateway.security.models.permissions.Permission;
@@ -30,8 +29,6 @@ import org.springframework.security.web.server.authorization.AuthorizationContex
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-  private final AppUserRepository appUserRepository;
 
   @Bean
   public PasswordEncoder passwordEncoder() {
@@ -93,7 +90,7 @@ public class SecurityConfig {
 //          System.out.println(requiredAuthorities);
           System.out.println();
           boolean authorized = authorities.contains(requiredAuthority.name())
-              && appUserRepository.findByUsername(authentication.getPrincipal().toString()).get().hasContract(contractedService);
+              && ((AppUser) authentication.getPrincipal()).hasContract(contractedService);
 
           return new AuthorizationDecision(authorized);
         });

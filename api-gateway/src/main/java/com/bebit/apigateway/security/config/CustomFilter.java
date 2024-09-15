@@ -1,6 +1,5 @@
 package com.bebit.apigateway.security.config;
 
-import com.bebit.apigateway.repositories.AppUserRepository;
 import com.bebit.apigateway.security.models.AppUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -15,17 +14,13 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class CustomFilter implements GlobalFilter, Ordered {
 
-  private final AppUserRepository appUserRepository;
-
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-    final Mono<?> username = exchange.getPrincipal();
-    return username
+    final Mono<?> authToken = exchange.getPrincipal();
+    return authToken
         .cast(UsernamePasswordAuthenticationToken.class)
         .map(token -> token.getPrincipal())
-        .cast(String.class)
-        .map(appUserRepository::findByUsername)
-        .map(value -> value.get())
+        .cast(AppUser.class)
         .map(AppUser::getClient)
         .map(client -> exchange.getRequest().mutate().header("clientId", "" + client.getId()).build())
         .flatMap(x -> chain.filter(exchange));

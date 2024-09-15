@@ -2,6 +2,7 @@ package com.bebit.apigateway.security.models;
 
 
 import com.bebit.apigateway.security.models.permissions.Role;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -29,10 +30,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AppUserRole {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
   @Enumerated(EnumType.STRING)
+  @Column(name = "name", unique = true)
   private Role name;
 
   @ManyToMany(fetch = FetchType.EAGER)

@@ -23,17 +23,17 @@ import lombok.Setter;
 public class Client {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
   int contractedServices;
 
-  public Set<ContractedService> getParseContractedServices() {
-    // TODO: parse
-    if (id == 1) {
-      return Set.of(ContractedService.FUNNEL);
-    }
-    return Set.of();
-  }
+//  public Set<ContractedService> getParseContractedServices() {
+//    // TODO: parse
+//    if (id == 1) {
+//      return Set.of(ContractedService.FUNNEL);
+//    }
+//    return Set.of();
+//  }
 
 }

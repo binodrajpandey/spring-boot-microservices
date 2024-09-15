@@ -1,12 +1,12 @@
 package com.bebit.apigateway.security.config;
 
+import com.bebit.apigateway.repositories.AppUserRepository;
+import com.bebit.apigateway.security.models.AppUser;
 import com.bebit.apigateway.security.models.permissions.ContractedService;
 import com.bebit.apigateway.security.models.permissions.Permission;
 import com.bebit.apigateway.security.models.permissions.Role;
-import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +31,8 @@ import org.springframework.security.web.server.authorization.AuthorizationContex
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+  private final AppUserRepository appUserRepository;
+
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
@@ -48,13 +50,24 @@ public class SecurityConfig {
     return http
         .authorizeExchange(auth -> {
           auth.pathMatchers("/api/auth/login").permitAll();
-          auth.pathMatchers(HttpMethod.POST, "/api/conversion").hasAnyRole(Role.SUPER_USER.name(), Role.ADMIN_USER.name());
+
+          auth.pathMatchers(HttpMethod.GET, "/api/product")
+              .hasAnyAuthority(Permission.VIEW_MEASUREMENT_SETTING.name());
+
+          auth.pathMatchers(HttpMethod.POST, "/api/product")
+              .hasAnyAuthority(Permission.EDIT_MEASUREMENT_SETTING.name());
+
+          auth.pathMatchers("/api/order")
+              .access(getAuthorizationManager(Permission.VIEW_MEASUREMENT_SETTING, ContractedService.WEB));
+
           auth.pathMatchers(HttpMethod.GET, "/api/funnel")
-              .access(getAuthorizationManager("ROLE_" + Role.ADMIN_USER.name(), ContractedService.FUNNEL.name()));
+              .access(getAuthorizationManager(Permission.VIEW_MEASUREMENT_SETTING, ContractedService.FUNNEL));
+
+          auth.pathMatchers(HttpMethod.POST, "/api/conversion")
+              .hasAnyRole(Role.SUPER_USER.name(), Role.ADMIN_USER.name());
           auth.pathMatchers(HttpMethod.GET, "/api/client-settins/treasire-data")
-              .access(getAuthorizationManager(Role.ADMIN_USER.name(), ContractedService.TD.name()));
-          auth.pathMatchers(HttpMethod.GET, "/api/product").hasAnyAuthority(Permission.GET_PRODUCT.name());
-          auth.pathMatchers(HttpMethod.POST, "/api/product").hasAnyAuthority(Permission.EDIT_PRODUCT.name());
+              .access(getAuthorizationManager(Permission.VIEW_MEASUREMENT_SETTING, ContractedService.TD));
+
           auth.anyExchange().authenticated();
         })
         .addFilterAt(jwtFilter, SecurityWebFiltersOrder.AUTHENTICATION)
@@ -65,8 +78,10 @@ public class SecurityConfig {
 
   }
 
-  private static ReactiveAuthorizationManager<AuthorizationContext> getAuthorizationManager(
-      String... requiredAuthorities) {
+  private ReactiveAuthorizationManager<AuthorizationContext> getAuthorizationManager(
+      Permission requiredAuthority,
+      ContractedService contractedService
+  ) {
     return (authenticationMono, ctx) -> authenticationMono
         .map(authentication -> {
           // Extract authorities from the authentication object
@@ -74,9 +89,11 @@ public class SecurityConfig {
               .map(GrantedAuthority::getAuthority)
               .collect(Collectors.toSet());
           System.out.println(authorities);
-          Arrays.stream(requiredAuthorities).forEach(System.out::println);
+//          Arrays.stream(requiredAuthorities).forEach(System.out::println);
 //          System.out.println(requiredAuthorities);
-          boolean authorized = Stream.of(requiredAuthorities).allMatch(authorities::contains);
+          System.out.println();
+          boolean authorized = authorities.contains(requiredAuthority.name())
+              && appUserRepository.findByUsername(authentication.getPrincipal().toString()).get().hasContract(contractedService);
 
           return new AuthorizationDecision(authorized);
         });

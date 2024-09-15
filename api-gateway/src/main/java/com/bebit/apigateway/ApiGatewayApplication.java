@@ -2,6 +2,8 @@ package com.bebit.apigateway;
 
 import com.bebit.apigateway.repositories.AppUserPermissionRepository;
 import com.bebit.apigateway.repositories.AppUserRepository;
+import com.bebit.apigateway.repositories.AppUserRoleRepository;
+import com.bebit.apigateway.repositories.ClientRepository;
 import com.bebit.apigateway.security.models.AppUser;
 import com.bebit.apigateway.security.models.AppUserPermission;
 import com.bebit.apigateway.security.models.AppUserRole;
@@ -28,15 +30,27 @@ public class ApiGatewayApplication {
   public CommandLineRunner commandLineRunner(
       AppUserRepository appUserRepository,
       AppUserPermissionRepository appUserPermissionRepository,
+      ClientRepository clientRepository,
+      AppUserRoleRepository appUserRoleRepository,
       PasswordEncoder passwordEncoder
   ) {
     return (args) -> {
+      appUserRoleRepository.deleteAll();
+      clientRepository.deleteAll();
+      appUserPermissionRepository.deleteAll();
+      appUserRoleRepository.deleteAll();
+
+      Client client1 = Client.builder().contractedServices(1).build();
+      clientRepository.save(client1);
+      Client client2 = Client.builder().contractedServices(3).build();
+      clientRepository.save(client2);
+
       AppUserPermission productEditPermission = AppUserPermission.builder()
-          .codename(Permission.EDIT_PRODUCT)
+          .codename(Permission.EDIT_MEASUREMENT_SETTING)
           .build();
 
       AppUserPermission productRetrievePermission = AppUserPermission.builder()
-          .codename(Permission.GET_PRODUCT)
+          .codename(Permission.VIEW_MEASUREMENT_SETTING)
           .build();
 
       appUserPermissionRepository.save(productEditPermission);
@@ -52,31 +66,48 @@ public class ApiGatewayApplication {
           .appUserPermissions(Set.of(productRetrievePermission))
           .build();
 
-      Client client1 = Client.builder().build();
-      Client client2 = Client.builder().build();
+      appUserRoleRepository.save(adminRole);
+      appUserRoleRepository.save(userRole);
 
+      // To test ADMIN
       AppUser appUser1 = AppUser.builder()
           .client(client1)
           .firstname("Binod")
           .lastname("Pandey")
           .username("binod")
+          .email("email")
           .password(passwordEncoder.encode("binod"))
           .appRole(adminRole)
           .build();
 
+      // To test NORMAL USER
       AppUser appUser2 = AppUser.builder()
-          .client(client2)
+          .client(client1)
           .firstname("Sandhya")
           .lastname("Silwal")
           .username("sandhya")
+          .email("email2")
           .password(passwordEncoder.encode("sandhya"))
+          .appRole(userRole)
+          .build();
+
+      // To test contracted feature
+      AppUser appUser3 = AppUser.builder()
+          .client(client2)
+          .firstname("Lukas")
+          .lastname("Schmid")
+          .username("lukas")
+          .email("email3")
+          .password(passwordEncoder.encode("lukas"))
           .appRole(userRole)
           .build();
 
       appUserRepository.save(appUser1);
       appUserRepository.save(appUser2);
+      appUserRepository.save(appUser3);
 
     };
   }
+
 
 }

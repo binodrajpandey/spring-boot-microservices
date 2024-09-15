@@ -1,5 +1,6 @@
 package com.bebit.apigateway.security.models;
 
+import com.bebit.apigateway.security.models.permissions.ContractedService;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,7 +32,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class AppUser implements UserDetails {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
   private String firstname;
@@ -40,11 +41,13 @@ public class AppUser implements UserDetails {
   private String email;
   private String password;
 
-  @ManyToOne(cascade = CascadeType.ALL)
+  // no cascade as we shouldn't save client while saving user
+  @ManyToOne
   @JoinColumn(name = "client_id")
   private Client client;
 
-  @ManyToOne(cascade = CascadeType.ALL)
+  // no cascade as we shouldn't save role while saving user
+  @ManyToOne
   @JoinColumn(name = "role_id")
   private AppUserRole appRole;
 
@@ -56,11 +59,11 @@ public class AppUser implements UserDetails {
         .collect(Collectors.toList());
     List<SimpleGrantedAuthority> roles = List.of(new SimpleGrantedAuthority("ROLE_" + appRole.getName().name()));
     permissions.addAll(roles);
-    Set<SimpleGrantedAuthority> contractedPermissions = client.getParseContractedServices().stream()
-            .map(contractedService -> new SimpleGrantedAuthority(contractedService.name()))
-                .collect(Collectors.toSet());
-
-    permissions.addAll(contractedPermissions);
+//    Set<SimpleGrantedAuthority> contractedPermissions = client.getParseContractedServices().stream()
+//            .map(contractedService -> new SimpleGrantedAuthority(contractedService.name()))
+//                .collect(Collectors.toSet());
+//
+//    permissions.addAll(contractedPermissions);
     return permissions;
   }
 
@@ -92,5 +95,9 @@ public class AppUser implements UserDetails {
   @Override
   public boolean isEnabled() {
     return true;
+  }
+
+  public boolean hasContract(ContractedService contractedService) {
+    return ((client.getContractedServices() & contractedService.getCode()) == contractedService.getCode());
   }
 }

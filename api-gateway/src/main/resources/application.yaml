@@ -31,6 +31,11 @@ spring:
         uri: http://localhost:8000
         predicates:
           - Path=/api/funnel
+        filters:
+          - name: CircuitBreaker
+            args:
+              name: fallbackCmd
+              fallbackUri: forward:/fallback
       - id: discovery-server
         uri: http://localhost:8761
         predicates:

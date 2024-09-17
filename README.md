@@ -1,3 +1,6 @@
+## Architecture
+![](./static/images/project-architecture.drawio.svg)
+
 ## Run project using docker
 ```commandline
 sh run-project.sh

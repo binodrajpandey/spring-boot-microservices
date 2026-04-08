@@ -1,82 +1,44 @@
 ## Architecture
 ![](./static/images/project-architecture.drawio.svg)
 
-## Tech Stack
-| Component | Technology |
-|---|---|
-| Language | Java 25 |
-| Framework | Spring Boot 4.0.5 |
-| Service Discovery | Spring Cloud Netflix Eureka |
-| API Gateway | Spring Cloud Gateway (WebFlux) |
-| Security | Spring Security + JWT |
-| Circuit Breaker | Resilience4j |
-| Databases | MySQL, MongoDB |
-| Tracing | Zipkin + Micrometer Brave |
-| Metrics | Prometheus + Grafana |
-| Build Tool | Gradle 9.4.1 |
-| Container | Docker + Docker Compose |
+## Run project using docker
+```commandline
+docker compose up -d --build
+```
 
-## Prerequisites
-- [Docker](https://docs.docker.com/get-docker/) (with Docker Compose plugin)
+## Run project manually
+If you want to run locally, do following steps
+1. Run required dependencies
+```commandline
+ docker-compose -f docker-compose-local.yml up -d
+```
+2. Run services in the following order
+- discovery-server (uses port:8761)
+- api-gateway (uses port: 8080)
+- product-service (uses port: 8081)
+- inventory-service (uses port: 8083)
+- order-service (uses port: 8080)
+- run funnel-service (uses port: 8000) (Service with different framework)
+  ```agsl
+    cd funnel-service
+    pip install -r requirement.txt
+    uvicorn main:app --reload
+    ```
 
-> No local Java installation required — the Docker build compiles the source inside the container.
+## Check if api-gateway is working fine
 
-## Run project using Docker
+### Login
 ```bash
-sh run-project.sh
-```
-This will build all services from source and start the full stack.
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "binod", "password": "binod"}'
+  ```
 
-| Service | URL |
-|---|---|
-| API Gateway | http://localhost:8080 |
-| Eureka Dashboard | http://localhost:8761 |
-| Zipkin | http://localhost:9411 |
-| Prometheus | http://localhost:9090 |
-| Grafana | http://localhost:3000 |
-
-## Run project manually (without Docker)
-
-### Prerequisites
-- Java 25
-- Docker (for dependencies)
-
-### Steps
-1. Start required dependencies (MySQL, MongoDB, Zipkin, etc.)
-```bash
-docker compose -f docker-compose-local.yml up -d
-```
-
-2. Run services in the following order:
-   - `discovery-server` (port: 8761)
-   - `api-gateway` (port: 8080)
-   - `product-service` (port: 8081)
-   - `inventory-service` (port: 8083)
-   - `order-service` (port: 8082)
-
-3. Run `funnel-service` (port: 8000) — Python service
-```bash
-cd funnel-service
-pip install -r requirement.txt
-uvicorn main:app --reload
-```
-
-## API Reference
-
-### Authentication
-All endpoints (except login) require a Bearer JWT token.
-
-**POST** `localhost:8080/api/auth/login`
-```json
-{
-    "username": "binod",
-    "password": "binod"
-}
-```
+Authorization type: Bearer token
 
 ### product-service
+POST: localhost:8080/api/product
 
-**POST** `localhost:8080/api/product`
 ```json
 {
     "name": "iPhone",
@@ -85,8 +47,10 @@ All endpoints (except login) require a Bearer JWT token.
 }
 ```
 
-**GET** `localhost:8080/api/product`
-```json
+GET: localhost:8080/api/product
+
+Response:
+```agsl
 [
     {
         "id": "66d7ee3bd482852c6e6c93c3",
@@ -97,25 +61,26 @@ All endpoints (except login) require a Bearer JWT token.
 ]
 ```
 
-### order-service
+### order-service with inventory-service
 
-**POST** `localhost:8080/api/order`
+POST: localhost:8080/api/order
 ```json
 {
-  "orderLineItems": [
+  "orderLineItems":  [
     {
-      "id": 1,
-      "skuCode": "iphone_13",
-      "quantity": 10,
-      "price": 120
+    "id": 1, 
+    "skuCode": "iphone_13",
+    "quantity": 10,
+    "price": 120
     }
-  ]
+]
 }
 ```
 
-### funnel-service
+### Service with different framework
+GET: localhost:8080/api/funnel
 
-**GET** `localhost:8080/api/funnel`
+expected response:
 ```json
 {
     "message": "Hello I am from funnel service"
@@ -126,11 +91,12 @@ All endpoints (except login) require a Bearer JWT token.
 
 ![](./static/images/grafana-monitor-diagram.drawio.svg)
 
-- Spring Boot exposes metrics via Actuator endpoints
-- Prometheus scrapes metrics at a regular interval (configured in `prometheus/prometheus.yml`)
-- Grafana visualizes the data from Prometheus
+- Spring-boot app will expose metrics via actuator endpoints.
+- Prometheus polls for the metrics at a regular interval configured in prometheus.yml
+- Prometheus stores the metrics which acts as datasource for the grafana
+- Grafana polls the data from prometheus at a regular interval and display on the dashboard
 
-### Setting up Grafana
-1. Open Grafana at http://localhost:3000 (admin / admin)
-2. Add a Prometheus data source with URL: `http://prometheus:9090`
-3. Import the dashboard from `grafana_dashboard.json`
+## Create a grafana dash-board
+- Add data source
+- Set prometheus url: http://prometheus:9090
+- Create dashboard by importing json `grafana_dashboard.json`

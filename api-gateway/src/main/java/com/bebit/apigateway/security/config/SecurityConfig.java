@@ -68,9 +68,9 @@ public class SecurityConfig {
           auth.anyExchange().authenticated();
         })
         .addFilterAt(jwtFilter, SecurityWebFiltersOrder.AUTHENTICATION)
-        .httpBasic().disable()
-        .formLogin().disable()
-        .csrf().disable()
+        .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+        .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+        .csrf(ServerHttpSecurity.CsrfSpec::disable)
         .build();
 
   }
